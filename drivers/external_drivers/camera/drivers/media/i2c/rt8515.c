@@ -12,6 +12,7 @@
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/timer.h>
+#include <linux/uidgid.h>
 #include <media/rt8515.h>
 #include <media/v4l2-ctrls.h>
 #include <media/v4l2-device.h>
@@ -714,6 +715,7 @@ static int rt8515_probe(struct i2c_client *client, const struct i2c_device_id *i
 	struct rt8515 *flash = NULL;
 	void* dummy = NULL;
     struct proc_dir_entry* proc_entry_flash = NULL;
+    kuid_t mytemp1; kgid_t mytemp2;
 
 	//rt8515_ENF = get_gpio_by_name("FLED_DRIVER_ENF");
 	//rt8515_ENT = get_gpio_by_name("FLED_DRIVER_ENT");
@@ -782,7 +784,8 @@ static int rt8515_probe(struct i2c_client *client, const struct i2c_device_id *i
 */
 
     proc_entry_flash = proc_create_data("driver/asus_flash_brightness", 0666, NULL, &flash_proc_fops, dummy);
-    proc_set_user(proc_entry_flash, 1000, 1000);
+    mytemp1.val = 1000; mytemp2.val = 1000;
+    proc_set_user(proc_entry_flash, mytemp1, mytemp2);
 
 #if 0
 

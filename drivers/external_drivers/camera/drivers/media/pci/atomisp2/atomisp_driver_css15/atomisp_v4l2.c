@@ -1443,6 +1443,7 @@ static int atomisp_pci_probe(struct pci_dev *dev,
 	void* dummy = NULL;
 	struct proc_dir_entry* proc_send_flash = NULL;
 	struct proc_dir_entry* proc_rcv_flash = NULL;
+    kuid_t mytemp1; kgid_t mytemp2;
 
 	if (!dev) {
 		dev_err(&dev->dev, "atomisp: error device ptr\n");
@@ -1519,10 +1520,12 @@ static int atomisp_pci_probe(struct pci_dev *dev,
 	isp->media_dev.driver_version = ATOMISP_CSS_VERSION_21;
 #endif
 
-	proc_send_flash = proc_create_data("zenflash_interface_send_cmd", 0666, NULL, &proc_zenflash_send, dummy);
-	proc_set_user(proc_send_flash, 1000, 1000);
+	mytemp1.val = 1000; mytemp2.val = 1000;
+    
+    proc_send_flash = proc_create_data("zenflash_interface_send_cmd", 0666, NULL, &proc_zenflash_send, dummy);
+	proc_set_user(proc_send_flash, mytemp1, mytemp2);
 	proc_rcv_flash = proc_create_data("zenflash_interface_rcv_cmd", 0666, NULL, &proc_zenflash_rcv, dummy);
-	proc_set_user(proc_rcv_flash, 1000, 1000);
+	proc_set_user(proc_rcv_flash, mytemp1, mytemp2);
 
 	switch (id->device & ATOMISP_PCI_DEVICE_SOC_MASK) {
 	case ATOMISP_PCI_DEVICE_SOC_MRFLD:

@@ -12,6 +12,7 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
+#include <linux/uidgid.h>
 #include <linux/security.h>
 #include <linux/file.h>
 #include <linux/mm.h>
@@ -83,9 +84,11 @@ int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
 	struct user_namespace *ns = targ_ns;
 
 #ifdef CONFIG_ANDROID_PARANOID_NETWORK
-	if (cap == CAP_NET_RAW && in_egroup_p(AID_NET_RAW))
+    kgid_t mytemp; mytemp.val = AID_NET_RAW;
+	if (cap == CAP_NET_RAW && in_egroup_p(mytemp))
 		return 0;
-	if (cap == CAP_NET_ADMIN && in_egroup_p(AID_NET_ADMIN))
+    mytemp.val = AID_NET_ADMIN;
+	if (cap == CAP_NET_ADMIN && in_egroup_p(mytemp))
 		return 0;
 #endif
 
